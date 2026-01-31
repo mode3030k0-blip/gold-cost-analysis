@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Cost Analysis - Soldier Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        h1 {
+            color: #ffd700;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .card {
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+        }
+        
+        h2 {
+            color: #ffd700;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 i {
+            font-size: 1.5rem;
+        }
+        
+        h3 {
+            color: #ffcc5c;
+            margin: 20px 0 15px;
+            font-size: 1.4rem;
+        }
+        
+        .highlight-box {
+            background: rgba(255, 215, 0, 0.1);
+            border-left: 4px solid #ffd700;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .resource-item {
+            background: rgba(40, 40, 60, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .resource-item:hover {
+            background: rgba(50, 50, 70, 0.9);
+            transform: scale(1.03);
+        }
+        
+        .resource-label {
+            font-size: 1.1rem;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+        }
+        
+        .resource-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .resource-sub {
+            font-size: 1rem;
+            color: #a0a0a0;
+            margin-top: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(40, 40, 60, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        th {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+        
+        .soldier-types {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .soldier-card {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(40, 40, 60, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border-top: 5px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .soldier-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .soldier-card.infantry {
+            border-color: #4CAF50;
+        }
+        
+        .soldier-card.archers {
+            border-color: #2196F3;
+        }
+        
+        .soldier-card.cavalry {
+            border-color: #f44336;
+        }
+        
+        .soldier-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .soldier-card.infantry .soldier-icon {
+            color: #4CAF50;
+        }
+        
+        .soldier-card.archers .soldier-icon {
+            color: #2196F3;
+        }
+        
+        .soldier-card.cavalry .soldier-icon {
+            color: #f44336;
+        }
+        
+        .soldier-name {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .exchange-rate {
+            background: rgba(30, 30, 46, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .exchange-rate .rate {
+            font-size: 1.8rem;
+            color: #ffd700;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .final-summary {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            text-align: center;
+        }
+        
+        .total-cost {
+            font-size: 3rem;
+            color: #ffd700;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .note {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 30px;
+            font-style: italic;
+            color: #b0b0b0;
+            border-left: 4px solid #ffd700;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .resource-grid, .soldier-types {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .total-cost {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> Gold Cost Analysis</h1>
+            <p class="subtitle">Soldier Unlocking & Healing/Training/Aiding Operations - Complete breakdown of gold costs for managing Infantry, Archers, and Cavalry troops at Level 11.</p>
+        </header>
+        
+        <div class="card">
+            <h2><i class="fas fa-flag"></i> Overview</h2>
+            <p>This plan outlines the total gold cost for unlocking all soldier types and performing healing, training, and aiding operations for each type. The analysis includes three soldier types: Infantry, Archers, and Cavalry.</p>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-unlock"></i> 1. Soldier Unlocking (Level 11)</h2>
+            
+            <div class="highlight-box">
+                <h3>Total Resources Required:</h3>
+                <div class="resource-grid">
+                    <div class="resource-item">
+                        <div class="resource-label">Total Gold Dust</div>
+                        <div class="resource-value">40,245</div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-label">Total Gold Coins</div>
+                        <div class="resource-value">11,970,000</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>Resources per Soldier Type (3 types: Infantry, Archers, Cavalry):</h3>
+            <div class="soldier-types">
+                <div class="soldier-card infantry">
+                    <div class="soldier-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="soldier-name">Infantry</div>
+                    <div class="resource-value">13,415</div>
+                    <div class="resource-sub">Gold Dust</div>
+                    <div class="resource-value">3,990,000</div>
+                    <div class="resource-sub">Gold Coins</div>
+                </div>
+                
+                <div class="soldier-card archers">
+                    <div class="soldier-icon"><i class="fas fa-bow-arrow"></i></div>
+                    <div class="soldier-name">Archers</div>
+                    <div class="resource-value">13,415</div>
+                    <div class="resource-sub">Gold Dust</div>
+                    <div class="resource-value">3,990,000</div>
+                    <div class="resource-sub">Gold Coins</div>
+                </div>
+                
+                <div class="soldier-card cavalry">
+                    <div class="soldier-icon"><i class="fas fa-horse"></i></div>
+                    <div class="soldier-name">Cavalry</div>
+                    <div class="resource-value">13,415</div>
+                    <div class="resource-sub">Gold Dust</div>
+                    <div class="resource-value">3,990,000</div>
+                    <div class="resource-sub">Gold Coins</div>
+                </div>
+            </div>
+            
+            <div class="exchange-rate">
+                <h3>Conversion to Real Gold</h3>
+                <div class="rate">1,300 Gold Dust = 1,000 Real Gold</div>
+                <div class="resource-grid">
+                    <div class="resource-item">
+                        <div class="resource-label">Total Real Gold (All Types)</div>
+                        <div class="resource-value">≈ 31,000</div>
+                        <div class="resource-sub">40,245 ÷ 1,300</div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-label">Real Gold per Type</div>
+                        <div class="resource-value">≈ 10,300</div>
+                        <div class="resource-sub">13,415 ÷ 1,300</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-heartbeat"></i> 2. Healing, Training & Aiding Costs</h2>
+            
+            <h3>Cost per Operation (Same for Infantry, Archers, Cavalry):</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Resource Type</th>
+                        <th>Cost per Operation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Gold Dust</td>
+                        <td>5,582</td>
+                    </tr>
+                    <tr>
+                        <td>Gold Coins</td>
+                        <td>1,630,000</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Cost per Soldier Type (3 operations per type):</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Soldier Type</th>
+                        <th>Gold Dust (3 ops)</th>
+                        <th>Gold Coins (3 ops)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i class="fas fa-shield-alt"></i> Infantry</td>
+                        <td>16,746</td>
+                        <td>4,890,000</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-bow-arrow"></i> Archers</td>
+                        <td>16,746</td>
+                        <td>4,890,000</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-horse"></i> Cavalry</td>
+                        <td>16,746</td>
+                        <td>4,890,000</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Total for All 3 Soldier Types:</h3>
+            <div class="resource-grid">
+                <div class="resource-item">
+                    <div class="resource-label">Total Gold Dust</div>
+                    <div class="resource-value">50,238</div>
+                    <div class="resource-sub">16,746 × 3</div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-label">Total Gold Coins</div>
+                    <div class="resource-value">14,670,000</div>
+                    <div class="resource-sub">4,890,000 × 3</div>
+                </div>
+            </div>
+            
+            <div class="exchange-rate">
+                <h3>Conversion to Real Gold</h3>
+                <div class="resource-item">
+                    <div class="resource-label">Total Real Gold for All Types</div>
+                    <div class="resource-value">≈ 38,600</div>
+                    <div class="resource-sub">50,238 ÷ 1,300</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="final-summary">
+            <h2><i class="fas fa-file-invoice-dollar"></i> 3. Final Summary</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Real Gold Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Soldier Unlocking (All 3 types)</td>
+                        <td>≈ 31,000</td>
+                    </tr>
+                    <tr>
+                        <td>Healing, Training & Aiding (All types)</td>
+                        <td>≈ 38,600</td>
+                    </tr>
+                    <tr style="background: rgba(255, 215, 0, 0.1); font-weight: bold;">
+                        <td>Total Cost</td>
+                        <td class="total-cost">≈ 69,600</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="note">
+            <h3><i class="fas fa-info-circle"></i> Note:</h3>
+            <p>All conversions are approximate based on the exchange rate: <strong>1,000 Real Gold = 1,300 Gold Dust</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>Gold Cost Analysis | Soldier Management System | Generated from provided calculations</p>
+            <p>Includes: Infantry, Archers, Cavalry | Level 11 Unlocking Costs</p>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate numbers on scroll
+            const observerOptions = {
+                threshold: 0.5
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all resource values
+            document.querySelectorAll('.resource-value').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Add click effect to cards
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.99)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
